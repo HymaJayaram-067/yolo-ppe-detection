@@ -134,6 +134,4 @@ Or use the provided notebook: `notebooks/train_colab.ipynb`
 - **Containerization:** Docker
 - **Training:** Google Colab, PyTorch
 
-## License
 
-MIT
