@@ -1,0 +1,19 @@
+# PPE Detection Dataset Configuration
+# Download from: https://universe.roboflow.com/roboflow-universe-projects/construction-site-safety
+# Format: YOLOv8
+
+path: ../datasets/ppe  # dataset root (relative to train script)
+train: images/train
+val: images/val
+test: images/test
+
+# Classes
+names:
+  0: Hardhat
+  1: No-Hardhat
+  2: Safety-Vest
+  3: No-Safety-Vest
+
+# Dataset stats
+# Total images: ~5000
+# Train/Val/Test split: 70/20/10

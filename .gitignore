@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.pt
+!yolov8n.pt
+!best.pt
+runs/
+datasets/
+output/*.mp4
+test_video.mp4
+.venv/
+venv/
+.idea/
+.vscode/
+*.log

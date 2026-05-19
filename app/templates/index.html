@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPE Compliance Monitor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #1a1a2e; color: #fff; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; margin-bottom: 20px; color: #00d4ff; }
+        .main { display: flex; gap: 20px; flex-wrap: wrap; }
+        .video-panel { flex: 2; min-width: 300px; }
+        .stats-panel { flex: 1; min-width: 250px; }
+        #video-feed { width: 100%; border-radius: 8px; background: #000; min-height: 360px; }
+        .stat-card { background: #16213e; padding: 20px; border-radius: 8px; margin-bottom: 15px; }
+        .stat-card h3 { color: #aaa; font-size: 14px; margin-bottom: 8px; }
+        .stat-card .value { font-size: 36px; font-weight: bold; }
+        .safe { color: #00ff88; }
+        .danger { color: #ff4444; }
+        .info { color: #00d4ff; }
+        .controls { text-align: center; margin: 20px 0; }
+        .btn { padding: 12px 30px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; margin: 0 10px; }
+        .btn-start { background: #00ff88; color: #000; }
+        .btn-stop { background: #ff4444; color: #fff; }
+        .btn:hover { opacity: 0.8; }
+        .status { text-align: center; color: #666; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>&#128737; PPE Compliance Monitor</h1>
+        <div class="controls">
+            <button class="btn btn-start" onclick="startStream()">Start Detection</button>
+            <button class="btn btn-stop" onclick="stopStream()">Stop</button>
+        </div>
+        <div class="main">
+            <div class="video-panel">
+                <img id="video-feed" src="" alt="Video feed will appear here">
+            </div>
+            <div class="stats-panel">
+                <div class="stat-card">
+                    <h3>WORKERS TRACKED</h3>
+                    <div class="value info" id="tracked">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>IN SAFETY ZONE</h3>
+                    <div class="value safe" id="in-zone">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>VIOLATIONS</h3>
+                    <div class="value danger" id="violations">0</div>
+                </div>
+            </div>
+        </div>
+        <p class="status" id="status">Click "Start Detection" to begin</p>
+    </div>
+
+    <script>
+        const socket = io();
+        const videoFeed = document.getElementById('video-feed');
+
+        socket.on('frame', (data) => {
+            videoFeed.src = 'data:image/jpeg;base64,' + data.image;
+            document.getElementById('tracked').textContent = data.stats.tracked;
+            document.getElementById('in-zone').textContent = data.stats.in_zone;
+            document.getElementById('violations').textContent = data.stats.violations;
+        });
+
+        socket.on('error', (data) => {
+            document.getElementById('status').textContent = 'Error: ' + data.msg;
+        });
+
+        function startStream() {
+            socket.emit('start_stream', { source: 'input_video.mp4' });
+            document.getElementById('status').textContent = 'Streaming...';
+        }
+
+        function stopStream() {
+            socket.emit('stop_stream');
+            document.getElementById('status').textContent = 'Stopped';
+        }
+    </script>
+</body>
+</html>
